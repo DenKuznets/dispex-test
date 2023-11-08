@@ -1,14 +1,11 @@
-import Avatar from 'components/Avatar'
-import logo from 'assets/logo.svg'
-
-const randoms = [
-  [1, 2],
-  [3, 4, 5],
-  [6, 7]
-]
+import TreeList from './TreeList/TreeList'
 
 function App() {
-  return <div className="relative overflow-hidden bg-white">Hello world</div>
+  return (
+    <div className="relative overflow-hidden bg-white">
+      <TreeList />
+    </div>
+  )
 }
 
 export default App
