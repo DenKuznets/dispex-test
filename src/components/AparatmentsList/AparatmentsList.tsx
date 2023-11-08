@@ -5,6 +5,7 @@ export interface ApartmentType {
     flat: string
     corpus?: string
     building: string
+    addressId: number
 }
 
 export interface ApartmentListType {
@@ -27,7 +28,7 @@ const AparatmentsList = ({
                 `https://dispex.org/api/vtest/HousingStock?streetId=${streetId}&houseId=${houseId}`
             )
             .then((result) => {
-                console.log(houseCorp)
+                // console.log(houseCorp)
                 const aparts = result.data.filter((obj: ApartmentType) => {
                     return houseCorp
                         ? obj.building === houseNumber &&
@@ -46,7 +47,8 @@ const AparatmentsList = ({
     const apartList = apartments.map((apart, index) => (
         <div key={index} className="bg-yellow-700 pl-4 hover:bg-yellow-300">
             Кваритра: {apart.flat} Дом: {apart.building}{' '}
-            {apart.corpus && <>Корпус {apart.corpus}</>}
+            {apart.corpus && <>Корпус {apart.corpus}</>} Адрес айди:{' '}
+            {apart.addressId}
         </div>
     ))
 

@@ -25,7 +25,7 @@ const HouseList = ({ street }: { street: StreetType }) => {
         // console.log('house info', houseInfo)
         const [houseNumber, houseCorp] = house.name.split('к')
 
-        console.log('house info', houseNumber, houseCorp)
+        // console.log('house info', houseNumber, houseCorp)
         return (
             <details
                 key={house.id}
