@@ -27,8 +27,8 @@ const HouseList = ({ street }: { street: StreetType }) => {
 
         console.log('house info', houseNumber, houseCorp)
         return (
-            <div key={house.id}>
-                Дом : {house.name}
+            <details key={house.id}>
+                <summary>Дом : {house.name}</summary>
                 <div className="bg-yellow-700 pl-4">
                     <AparatmentsList
                         streetId={street.id}
@@ -37,7 +37,7 @@ const HouseList = ({ street }: { street: StreetType }) => {
                         houseNumber={houseNumber}
                     />
                 </div>
-            </div>
+            </details>
         )
     })
 
