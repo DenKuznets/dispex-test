@@ -44,7 +44,7 @@ const AparatmentsList = ({
     if (!apartments) return <div>Loading...</div>
 
     const apartList = apartments.map((apart, index) => (
-        <div key={index}>
+        <div key={index} className="bg-yellow-700 pl-4 hover:bg-yellow-300">
             Кваритра: {apart.flat} Дом: {apart.building}{' '}
             {apart.corpus && <>Корпус {apart.corpus}</>}
         </div>

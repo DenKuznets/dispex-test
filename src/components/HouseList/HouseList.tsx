@@ -27,9 +27,12 @@ const HouseList = ({ street }: { street: StreetType }) => {
 
         console.log('house info', houseNumber, houseCorp)
         return (
-            <details key={house.id}>
+            <details
+                key={house.id}
+                className="bg-red-600 pl-4 hover:bg-red-400"
+            >
                 <summary>Дом : {house.name}</summary>
-                <div className="bg-yellow-700 pl-4">
+                <div>
                     <AparatmentsList
                         streetId={street.id}
                         houseId={house.id}

@@ -21,9 +21,12 @@ const StreetList = () => {
     if (!streets) return <div>Loading...</div>
     const streetList = streets.map((street) => {
         return (
-            <details className="bg-purple-500" key={street.nameWithPrefix}>
+            <details
+                className="cursor-pointer bg-purple-500 hover:bg-purple-300"
+                key={street.nameWithPrefix}
+            >
                 <summary>{street.nameWithPrefix}</summary>
-                <div className="bg-red-600 pl-4">
+                <div>
                     <HouseList street={street} />
                 </div>
             </details>
