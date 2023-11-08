@@ -22,6 +22,7 @@ const AparatmentsList = ({
     houseNumber
 }: ApartmentListType) => {
     const [apartments, setApartments] = useState<ApartmentType[]>()
+    const [showClients, setShowClients] = useState(false)
     useEffect(() => {
         axios
             .get(
