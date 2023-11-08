@@ -1,9 +1,9 @@
-import TreeList from './StreetList/StreetList'
+import StreetList from './StreetList/StreetList'
 
 function App() {
     return (
-        <div className="relative overflow-hidden bg-white">
-            <TreeList />
+        <div className="relative  flex overflow-hidden bg-white">
+            <StreetList />
         </div>
     )
 }
