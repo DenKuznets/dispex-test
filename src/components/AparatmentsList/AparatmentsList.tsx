@@ -1,4 +1,5 @@
 import axios from 'axios'
+import ClientsList, { ClientType } from 'components/ClientsList/ClientsList'
 import React, { useEffect, useState } from 'react'
 
 export interface ApartmentType {
@@ -6,6 +7,7 @@ export interface ApartmentType {
     corpus?: string
     building: string
     addressId: number
+    clients: ClientType[]
 }
 
 export interface ApartmentListType {
@@ -15,6 +17,23 @@ export interface ApartmentListType {
     houseNumber: string
 }
 
+const Apartment = ({ apartment } : {apartment: ApartmentType}) => {
+    const [showClients, setShowClients] = useState(false)
+    return (
+        <div
+            onClick={() => {
+                setShowClients(true)
+            }}
+            className="bg-yellow-700 pl-4 hover:bg-yellow-300"
+        >
+            Кваритра: {apartment.flat} Дом: {apartment.building}{' '}
+            {apartment.corpus && <>Корпус {apartment.corpus}</>} Адрес айди:{' '}
+            {apartment.addressId}
+            {showClients && <ClientsList addressId={apartment.addressId} clients={ apartment.clients } />}
+        </div>
+    )
+}
+
 const AparatmentsList = ({
     streetId,
     houseId,
@@ -22,14 +41,13 @@ const AparatmentsList = ({
     houseNumber
 }: ApartmentListType) => {
     const [apartments, setApartments] = useState<ApartmentType[]>()
-    const [showClients, setShowClients] = useState(false)
+    
     useEffect(() => {
         axios
             .get(
                 `https://dispex.org/api/vtest/HousingStock?streetId=${streetId}&houseId=${houseId}`
             )
             .then((result) => {
-                // console.log(houseCorp)
                 const aparts = result.data.filter((obj: ApartmentType) => {
                     return houseCorp
                         ? obj.building === houseNumber &&
@@ -42,15 +60,12 @@ const AparatmentsList = ({
                 })
                 setApartments(aparts)
             })
-    }, [])
+    }, [houseCorp, houseNumber, houseId, streetId])
+
     if (!apartments) return <div>Loading...</div>
 
     const apartList = apartments.map((apart, index) => (
-        <div key={index} className="bg-yellow-700 pl-4 hover:bg-yellow-300">
-            Кваритра: {apart.flat} Дом: {apart.building}{' '}
-            {apart.corpus && <>Корпус {apart.corpus}</>} Адрес айди:{' '}
-            {apart.addressId}
-        </div>
+        <Apartment apartment={apart} key={index}/>
     ))
 
     return <div>{apartList}</div>
