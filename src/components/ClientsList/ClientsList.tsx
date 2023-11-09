@@ -1,35 +1,36 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 export interface ClientType {
-    Name: string
-    Phone: string
-    Email: string
-    id?: number
+    Name: string;
+    Phone: string;
+    Email: string;
+    id?: number;
 }
 
 interface FormValues {
-    name: string
-    phone: string
-    email: string
+    name: string;
+    phone: string;
+    email: string;
 }
 
 const ClientsList = ({
     clients,
     addressId
 }: {
-    addressId: number
-    clients: ClientType[]
+    addressId: number;
+    clients: ClientType[];
 }) => {
-    const [addedClients, setAddedClients] = useState<ClientType[]>(clients)
+    const [addedClients, setAddedClients] = useState<ClientType[]>(clients);
     const { formState, register, handleSubmit } = useForm<FormValues>({
         defaultValues: {
             name: '',
             email: '',
             phone: ''
         }
-    })
+    });
+    const { errors } = formState;
     const deleteClient = (id: number) => {
         // console.log('deleting user');
         axios
@@ -37,17 +38,17 @@ const ClientsList = ({
                 `https://dispex.org/api/vtest/HousingStock/bind_client/${id}`
             )
             .then((result) => {
-                console.log('deleted user', result)
+                console.log('deleted user', result);
                 if (result.status === 200) {
                     setAddedClients(
                         addedClients.filter((client) => client.id !== id)
-                    )
+                    );
                 }
-            })
-    }
+            });
+    };
 
     const onSubmit: SubmitHandler<FormValues> = (data) => {
-        console.log('submit', data)
+        console.log('submit', data);
         axios
             .post('https://dispex.org/api/vtest/HousingStock/client', {
                 Name: data.name,
@@ -57,7 +58,7 @@ const ClientsList = ({
             .then((result) => {
                 // console.log(result.data)
                 if (result.data.result === 'Ok') {
-                    const clientId = result.data.id
+                    const clientId = result.data.id;
                     axios
                         .put(
                             'https://dispex.org/api/vtest/HousingStock/bind_client',
@@ -77,12 +78,12 @@ const ClientsList = ({
                                         Email: data.email,
                                         id: clientId
                                     }
-                                ])
+                                ]);
                             }
-                        })
+                        });
                 }
-            })
-    }
+            });
+    };
 
     // console.log(addedClients);
     const cliList =
@@ -101,11 +102,11 @@ const ClientsList = ({
                             Удалить
                         </button>
                     </div>
-                )
+                );
             })
         ) : (
             <div>В квартире жильцов нет</div>
-        )
+        );
     return (
         <div className="fixed left-1/2 top-1/2 flex min-h-[70vh] min-w-[70vw] -translate-x-1/2 -translate-y-1/2 flex-col rounded-lg bg-gray-200 p-10">
             <div>{cliList}</div>
@@ -157,7 +158,7 @@ const ClientsList = ({
                 </form>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default ClientsList
+export default ClientsList;
