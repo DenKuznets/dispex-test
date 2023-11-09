@@ -1,11 +1,18 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { useForm, SubmitHandler } from 'react-hook-form'
 
 export interface ClientType {
     Name: string
     Phone: string
     Email: string
     id?: number
+}
+
+interface FormValues {
+    name: string
+    phone: string
+    email: string
 }
 
 const ClientsList = ({
@@ -16,7 +23,13 @@ const ClientsList = ({
     clients: ClientType[]
 }) => {
     const [addedClients, setAddedClients] = useState<ClientType[]>(clients)
-
+    const { formState, register, handleSubmit } = useForm<FormValues>({
+        defaultValues: {
+            name: '',
+            email: '',
+            phone: ''
+        }
+    })
     const deleteClient = (id: number) => {
         // console.log('deleting user');
         axios
@@ -33,14 +46,13 @@ const ClientsList = ({
             })
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        console.log(e)
-        e.preventDefault()
+    const onSubmit: SubmitHandler<FormValues> = (data) => {
+        console.log('submit', data)
         axios
             .post('https://dispex.org/api/vtest/HousingStock/client', {
-                Name: 'den',
-                Phone: '8996959595',
-                Email: 'string@string.string'
+                Name: data.name,
+                Phone: data.phone,
+                Email: data.email
             })
             .then((result) => {
                 // console.log(result.data)
@@ -60,9 +72,9 @@ const ClientsList = ({
                                 setAddedClients((prev) => [
                                     ...prev,
                                     {
-                                        Name: 'den',
-                                        Phone: '8996959595',
-                                        Email: 'string@string.string',
+                                        Name: data.name,
+                                        Phone: data.phone,
+                                        Email: data.email,
                                         id: clientId
                                     }
                                 ])
@@ -71,6 +83,7 @@ const ClientsList = ({
                 }
             })
     }
+
     // console.log(addedClients);
     const cliList =
         addedClients.length > 0 ? (
@@ -98,34 +111,45 @@ const ClientsList = ({
             <div>{cliList}</div>
             <div className="absolute bottom-0 left-0 w-full bg-gray-400 px-4 py-6">
                 <form
-                    onSubmit={(e) => handleSubmit(e)}
-                    action=""
+                    noValidate
+                    aria-label="personal info form"
+                    onSubmit={handleSubmit(onSubmit)}
                     className="flex flex-col flex-wrap items-center justify-start gap-4  lg:flex-row"
                 >
                     <label htmlFor="name"> Имя</label>
                     <input
                         autoFocus
-                        name="name"
                         id="name"
                         className=" min-w-0 rounded p-2"
                         placeholder="Иван"
                         type="text"
+                        {...register(`name`, {
+                            required: 'This field is required'
+                        })}
                     />
                     <label htmlFor="phone"> Телефон</label>
                     <input
-                        name="phone"
                         id="phone"
                         className=" min-w-0 rounded p-2"
                         placeholder="+7"
                         type="text"
+                        {...register(`phone`, {
+                            required: 'This field is required'
+                        })}
                     />
                     <label htmlFor="email"> Почта</label>
                     <input
-                        name="email"
                         id="email"
                         className=" min-w-0 rounded p-2"
                         placeholder="example@test.ru"
                         type="text"
+                        {...register(`email`, {
+                            required: 'This field is required',
+                            pattern: {
+                                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                                message: 'Invalid email'
+                            }
+                        })}
                     />
                     <button className=" rounded bg-amber-500 p-2 hover:bg-amber-300 active:scale-95">
                         Добавить жильца
