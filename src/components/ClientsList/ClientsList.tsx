@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 export interface ClientType {
@@ -32,13 +32,11 @@ const ClientsList = ({
     });
     const { errors } = formState;
     const deleteClient = (id: number) => {
-        // console.log('deleting user');
         axios
             .delete(
                 `https://dispex.org/api/vtest/HousingStock/bind_client/${id}`
             )
             .then((result) => {
-                console.log('deleted user', result);
                 if (result.status === 200) {
                     setAddedClients(
                         addedClients.filter((client) => client.id !== id)
@@ -56,7 +54,6 @@ const ClientsList = ({
                 Email: data.email
             })
             .then((result) => {
-                // console.log(result.data)
                 if (result.data.result === 'Ok') {
                     const clientId = result.data.id;
                     axios
@@ -68,7 +65,6 @@ const ClientsList = ({
                             }
                         )
                         .then((result) => {
-                            // console.log(result)
                             if (result.status === 200) {
                                 setAddedClients((prev) => [
                                     ...prev,
@@ -85,13 +81,11 @@ const ClientsList = ({
             });
     };
 
-    // console.log(addedClients);
     const cliList =
         addedClients.length > 0 ? (
             addedClients.map((client, index) => {
-                // console.log('client', client)
                 return (
-                    <div key={index}>
+                    <div key={index} className="flex max-w-xs flex-col gap-2">
                         <div>{client.Name}</div>
                         <div>{client.Phone}</div>
                         <div>{client.Email}</div>
@@ -108,8 +102,8 @@ const ClientsList = ({
             <div>В квартире жильцов нет</div>
         );
     return (
-        <div className="fixed left-1/2 top-1/2 flex min-h-[70vh] min-w-[70vw] -translate-x-1/2 -translate-y-1/2 flex-col rounded-lg bg-gray-200 p-10">
-            <div>{cliList}</div>
+        <div className="fixed left-1/2 top-1/2 flex min-h-[70vh] min-w-[70vw] -translate-x-1/2 -translate-y-1/2 cursor-default flex-col rounded-lg bg-gray-200 p-10">
+            <div className="flex flex-wrap gap-4">{cliList}</div>
             <div className="absolute bottom-0 left-0 w-full bg-gray-400 px-4 py-6">
                 <form
                     noValidate
@@ -117,41 +111,67 @@ const ClientsList = ({
                     onSubmit={handleSubmit(onSubmit)}
                     className="flex flex-col flex-wrap items-center justify-start gap-4  lg:flex-row"
                 >
-                    <label htmlFor="name"> Имя</label>
-                    <input
-                        autoFocus
-                        id="name"
-                        className=" min-w-0 rounded p-2"
-                        placeholder="Иван"
-                        type="text"
-                        {...register(`name`, {
-                            required: 'This field is required'
-                        })}
-                    />
-                    <label htmlFor="phone"> Телефон</label>
-                    <input
-                        id="phone"
-                        className=" min-w-0 rounded p-2"
-                        placeholder="+7"
-                        type="text"
-                        {...register(`phone`, {
-                            required: 'This field is required'
-                        })}
-                    />
-                    <label htmlFor="email"> Почта</label>
-                    <input
-                        id="email"
-                        className=" min-w-0 rounded p-2"
-                        placeholder="example@test.ru"
-                        type="text"
-                        {...register(`email`, {
-                            required: 'This field is required',
-                            pattern: {
-                                value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-                                message: 'Invalid email'
-                            }
-                        })}
-                    />
+                    <div className="relative">
+                        <p className="absolute left-[32px] top-[-21px] text-[0.75rem] text-red-800">
+                            {errors.name?.message}
+                        </p>
+                        <label htmlFor="name"> Имя</label>
+                        <input
+                            autoFocus
+                            id="name"
+                            className={`min-w-0 rounded p-2  ${
+                                errors.name ? 'bg-red-200 outline-red-600' : ''
+                            }`}
+                            placeholder="Иван"
+                            type="text"
+                            {...register(`name`, {
+                                required: 'Это поле необходимо заполнить'
+                            })}
+                        />
+                    </div>
+                    <div className="relative">
+                        <p className="absolute left-[62px] top-[-21px] text-[0.75rem] text-red-800">
+                            {errors.name?.message}
+                        </p>
+                        <label htmlFor="phone"> Телефон</label>
+
+                        <input
+                            id="phone"
+                            className={`min-w-0 rounded p-2  ${
+                                errors.phone ? 'bg-red-200 outline-red-600' : ''
+                            }`}
+                            placeholder="+7"
+                            type="text"
+                            {...register(`phone`, {
+                                required: 'This field is required',
+                                pattern: {
+                                    value: /^((8|\+7)[- ]?)?(\(?\d{3}\)?[- ]?)?[\d\- ]{7,10}$/g,
+                                    message: 'Invalid email'
+                                }
+                            })}
+                        />
+                    </div>
+                    <div className="relative">
+                        <p className="absolute left-[43px] top-[-21px] text-[0.75rem] text-red-800">
+                            {errors.name?.message}
+                        </p>
+                        <label htmlFor="email"> Почта</label>
+                        <input
+                            id="email"
+                            className={`min-w-0 rounded p-2  ${
+                                errors.email ? 'bg-red-200 outline-red-600' : ''
+                            }`}
+                            placeholder="example@test.ru"
+                            type="text"
+                            {...register(`email`, {
+                                required: 'This field is required',
+                                pattern: {
+                                    value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                                    message: 'Invalid email'
+                                }
+                            })}
+                        />
+                    </div>
                     <button className=" rounded bg-amber-500 p-2 hover:bg-amber-300 active:scale-95">
                         Добавить жильца
                     </button>
