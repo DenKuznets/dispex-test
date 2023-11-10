@@ -126,11 +126,11 @@ const ClientsList = ({
                     onSubmit={handleSubmit(onSubmit)}
                     className={` ${
                         showForm ? 'flex' : 'hidden'
-                    } flex-col flex-wrap items-center justify-start gap-4`}
+                    } flex-col flex-wrap items-center justify-start gap-10`}
                 >
                     <div className="flex flex-col gap-4 lg:flex-row">
                         <div className="relative  flex flex-col">
-                            <p className="absolute bottom-[-40px] left-[32px] text-[0.75rem] text-red-800">
+                            <p className="absolute bottom-[-24px] left-0  w-full text-[0.75rem] text-red-800">
                                 {errors.name?.message}
                             </p>
                             <label htmlFor="name"> Имя</label>
@@ -145,12 +145,12 @@ const ClientsList = ({
                                 placeholder="Иван"
                                 type="text"
                                 {...register(`name`, {
-                                    required: 'Это поле необходимо заполнить'
+                                    required: 'Поле необходимо заполнить'
                                 })}
                             />
                         </div>
                         <div className="relative  flex flex-col">
-                            <p className="absolute left-[62px] top-[-21px] text-[0.75rem] text-red-800">
+                            <p className="absolute bottom-[-24px] left-0  w-full text-[0.75rem] text-red-800">
                                 {errors.phone?.message}
                             </p>
                             <label htmlFor="phone"> Телефон</label>
@@ -165,7 +165,7 @@ const ClientsList = ({
                                 placeholder="+7"
                                 type="text"
                                 {...register(`phone`, {
-                                    required: 'This field is required',
+                                    required: 'Поле необходимо заполнить',
                                     pattern: {
                                         value: /^((8|\+7)[- ]?)?(\(?\d{3}\)?[- ]?)?[\d\- ]{7,10}$/g,
                                         message: 'Некорректный номер телефона'
@@ -174,7 +174,7 @@ const ClientsList = ({
                             />
                         </div>
                         <div className="relative flex flex-col">
-                            <p className="absolute left-[43px] top-[-21px] text-[0.75rem] text-red-800">
+                            <p className="absolute bottom-[-24px] left-0  w-full text-[0.75rem] text-red-800">
                                 {errors.email?.message}
                             </p>
                             <label htmlFor="email"> Почта</label>
@@ -188,7 +188,7 @@ const ClientsList = ({
                                 placeholder="example@test.ru"
                                 type="text"
                                 {...register(`email`, {
-                                    required: 'This field is required',
+                                    required: 'Поле необходимо заполнить',
                                     pattern: {
                                         value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
                                         message: 'Некорректный емейл'
