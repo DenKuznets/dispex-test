@@ -13,7 +13,6 @@ const StreetList = () => {
         axios
             .get('https://dispex.org/api/vtest/Request/streets')
             .then((result) => {
-                console.log('streets', result.data)
                 setStreets(result.data)
             })
     }, [])
@@ -22,7 +21,7 @@ const StreetList = () => {
     const streetList = streets.map((street) => {
         return (
             <details
-                className="cursor-pointer bg-purple-500 hover:bg-purple-300"
+                className="cursor-pointer bg-purple-500 p-2 hover:bg-purple-300"
                 key={street.nameWithPrefix}
             >
                 <summary>{street.nameWithPrefix}</summary>

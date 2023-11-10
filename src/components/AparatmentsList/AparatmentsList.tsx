@@ -19,21 +19,36 @@ export interface ApartmentListType {
 
 const Apartment = ({ apartment }: { apartment: ApartmentType }) => {
     const [showClients, setShowClients] = useState(false);
+    useEffect(() => {
+        document.body.style.overflow = showClients ? 'hidden' : 'auto';
+    }, [showClients]);
+
     return (
         <div
             onClick={() => {
                 setShowClients(true);
             }}
-            className="bg-yellow-700 pl-4 hover:bg-yellow-300"
+            className="bg-green-600 pl-4 hover:bg-green-300"
         >
-            Кваритра: {apartment.flat} Дом: {apartment.building}{' '}
-            {apartment.corpus && <>Корпус {apartment.corpus}</>} Адрес айди:{' '}
-            {apartment.addressId}
+            Кваритра: {apartment.flat}
             {showClients && (
-                <ClientsList
-                    addressId={apartment.addressId}
-                    clients={apartment.clients}
-                />
+                <div className="fixed left-0 top-0 min-h-full min-w-full cursor-default bg-slate-200/75">
+                    <div className="absolute left-1/2 top-1/2 flex min-h-[70vh] min-w-[70vw] -translate-x-1/2 -translate-y-1/2  flex-col  overflow-hidden rounded-lg bg-gray-200 p-4 sm:p-10">
+                        <ClientsList
+                            addressId={apartment.addressId}
+                            clients={apartment.clients}
+                        />
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowClients(false);
+                            }}
+                            className="absolute right-[5px] top-[5px] rounded bg-gray-600 p-2 hover:bg-gray-400"
+                        >
+                            Х
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );

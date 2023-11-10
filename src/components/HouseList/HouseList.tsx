@@ -15,17 +15,14 @@ const HouseList = ({ street }: { street: StreetType }) => {
             axios
                 .get(`https://dispex.org/api/vtest/Request/houses/${street.id}`)
                 .then((result) => {
-                    console.log('houses', result.data)
                     setHouseList(result.data)
                 })
         }
     }, [street])
 
     const houses = houseList.map((house) => {
-        // console.log('house info', houseInfo)
         const [houseNumber, houseCorp] = house.name.split('к')
 
-        // console.log('house info', houseNumber, houseCorp)
         return (
             <details
                 key={house.id}

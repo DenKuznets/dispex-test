@@ -1,12 +1,14 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { nanoid } from 'nanoid';
 
 export interface ClientType {
     Name: string;
     Phone: string;
     Email: string;
-    id?: number;
+    serverId?: number;
+    id?: string;
 }
 
 interface FormValues {
@@ -23,6 +25,7 @@ const ClientsList = ({
     clients: ClientType[];
 }) => {
     const [addedClients, setAddedClients] = useState<ClientType[]>(clients);
+    const [showForm, setShowForm] = useState(false);
     const { formState, register, handleSubmit } = useForm<FormValues>({
         defaultValues: {
             name: '',
@@ -31,22 +34,23 @@ const ClientsList = ({
         }
     });
     const { errors } = formState;
-    const deleteClient = (id: number) => {
+    const deleteClient = (clientToDelete: ClientType) => {
         axios
             .delete(
-                `https://dispex.org/api/vtest/HousingStock/bind_client/${id}`
+                `https://dispex.org/api/vtest/HousingStock/bind_client/${clientToDelete.serverId}`
             )
             .then((result) => {
                 if (result.status === 200) {
                     setAddedClients(
-                        addedClients.filter((client) => client.id !== id)
+                        addedClients.filter(
+                            (client) => client.id !== clientToDelete.id
+                        )
                     );
                 }
             });
     };
 
     const onSubmit: SubmitHandler<FormValues> = (data) => {
-        console.log('submit', data);
         axios
             .post('https://dispex.org/api/vtest/HousingStock/client', {
                 Name: data.name,
@@ -72,7 +76,8 @@ const ClientsList = ({
                                         Name: data.name,
                                         Phone: data.phone,
                                         Email: data.email,
-                                        id: clientId
+                                        serverId: clientId,
+                                        id: nanoid()
                                     }
                                 ]);
                             }
@@ -91,7 +96,7 @@ const ClientsList = ({
                         <div>{client.Email}</div>
                         <button
                             className="bg-red-500 p-2"
-                            onClick={() => client.id && deleteClient(client.id)}
+                            onClick={() => client.id && deleteClient(client)}
                         >
                             Удалить
                         </button>
@@ -102,79 +107,111 @@ const ClientsList = ({
             <div>В квартире жильцов нет</div>
         );
     return (
-        <div className="fixed left-1/2 top-1/2 flex min-h-[70vh] min-w-[70vw] -translate-x-1/2 -translate-y-1/2 cursor-default flex-col rounded-lg bg-gray-200 p-10">
-            <div className="flex flex-wrap gap-4">{cliList}</div>
+        <div className="">
+            <div className="flex max-h-80 flex-wrap gap-4 overflow-y-auto">
+                {cliList}
+            </div>
             <div className="absolute bottom-0 left-0 w-full bg-gray-400 px-4 py-6">
+                {!showForm && (
+                    <button
+                        className=" rounded bg-amber-500 p-2 hover:bg-amber-300 active:scale-95"
+                        onClick={() => setShowForm(true)}
+                    >
+                        Добавить жильца
+                    </button>
+                )}
                 <form
                     noValidate
                     aria-label="personal info form"
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex flex-col flex-wrap items-center justify-start gap-4  lg:flex-row"
+                    className={` ${
+                        showForm ? 'flex' : 'hidden'
+                    } flex-col flex-wrap items-center justify-start gap-4`}
                 >
-                    <div className="relative">
-                        <p className="absolute left-[32px] top-[-21px] text-[0.75rem] text-red-800">
-                            {errors.name?.message}
-                        </p>
-                        <label htmlFor="name"> Имя</label>
-                        <input
-                            autoFocus
-                            id="name"
-                            className={`min-w-0 rounded p-2  ${
-                                errors.name ? 'bg-red-200 outline-red-600' : ''
-                            }`}
-                            placeholder="Иван"
-                            type="text"
-                            {...register(`name`, {
-                                required: 'Это поле необходимо заполнить'
-                            })}
-                        />
-                    </div>
-                    <div className="relative">
-                        <p className="absolute left-[62px] top-[-21px] text-[0.75rem] text-red-800">
-                            {errors.name?.message}
-                        </p>
-                        <label htmlFor="phone"> Телефон</label>
+                    <div className="flex flex-col gap-4 lg:flex-row">
+                        <div className="relative  flex flex-col">
+                            <p className="absolute bottom-[-40px] left-[32px] text-[0.75rem] text-red-800">
+                                {errors.name?.message}
+                            </p>
+                            <label htmlFor="name"> Имя</label>
+                            <input
+                                autoFocus
+                                id="name"
+                                className={`min-w-0 rounded p-2 ${
+                                    errors.name
+                                        ? 'bg-red-200 outline-red-600'
+                                        : ''
+                                }`}
+                                placeholder="Иван"
+                                type="text"
+                                {...register(`name`, {
+                                    required: 'Это поле необходимо заполнить'
+                                })}
+                            />
+                        </div>
+                        <div className="relative  flex flex-col">
+                            <p className="absolute left-[62px] top-[-21px] text-[0.75rem] text-red-800">
+                                {errors.phone?.message}
+                            </p>
+                            <label htmlFor="phone"> Телефон</label>
 
-                        <input
-                            id="phone"
-                            className={`min-w-0 rounded p-2  ${
-                                errors.phone ? 'bg-red-200 outline-red-600' : ''
-                            }`}
-                            placeholder="+7"
-                            type="text"
-                            {...register(`phone`, {
-                                required: 'This field is required',
-                                pattern: {
-                                    value: /^((8|\+7)[- ]?)?(\(?\d{3}\)?[- ]?)?[\d\- ]{7,10}$/g,
-                                    message: 'Invalid email'
-                                }
-                            })}
-                        />
+                            <input
+                                id="phone"
+                                className={`min-w-0 rounded p-2  ${
+                                    errors.phone
+                                        ? 'bg-red-200 outline-red-600'
+                                        : ''
+                                }`}
+                                placeholder="+7"
+                                type="text"
+                                {...register(`phone`, {
+                                    required: 'This field is required',
+                                    pattern: {
+                                        value: /^((8|\+7)[- ]?)?(\(?\d{3}\)?[- ]?)?[\d\- ]{7,10}$/g,
+                                        message: 'Некорректный номер телефона'
+                                    }
+                                })}
+                            />
+                        </div>
+                        <div className="relative flex flex-col">
+                            <p className="absolute left-[43px] top-[-21px] text-[0.75rem] text-red-800">
+                                {errors.email?.message}
+                            </p>
+                            <label htmlFor="email"> Почта</label>
+                            <input
+                                id="email"
+                                className={`min-w-0 rounded p-2  ${
+                                    errors.email
+                                        ? 'bg-red-200 outline-red-600'
+                                        : ''
+                                }`}
+                                placeholder="example@test.ru"
+                                type="text"
+                                {...register(`email`, {
+                                    required: 'This field is required',
+                                    pattern: {
+                                        value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                                        message: 'Некорректный емейл'
+                                    }
+                                })}
+                            />
+                        </div>
                     </div>
-                    <div className="relative">
-                        <p className="absolute left-[43px] top-[-21px] text-[0.75rem] text-red-800">
-                            {errors.name?.message}
-                        </p>
-                        <label htmlFor="email"> Почта</label>
-                        <input
-                            id="email"
-                            className={`min-w-0 rounded p-2  ${
-                                errors.email ? 'bg-red-200 outline-red-600' : ''
-                            }`}
-                            placeholder="example@test.ru"
-                            type="text"
-                            {...register(`email`, {
-                                required: 'This field is required',
-                                pattern: {
-                                    value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
-                                    message: 'Invalid email'
-                                }
-                            })}
-                        />
+
+                    <div className="flex gap-4">
+                        <button className=" rounded bg-amber-500 p-2 hover:bg-amber-300 active:scale-95">
+                            ОК
+                        </button>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setShowForm(false);
+                            }}
+                            className=" rounded bg-amber-500 p-2 hover:bg-amber-300 active:scale-95"
+                        >
+                            Закрыть
+                        </button>
                     </div>
-                    <button className=" rounded bg-amber-500 p-2 hover:bg-amber-300 active:scale-95">
-                        Добавить жильца
-                    </button>
                 </form>
             </div>
         </div>
